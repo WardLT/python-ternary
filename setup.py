@@ -23,7 +23,7 @@ setup(
     version = "1.0.1",
     packages=['ternary'],
 
-    install_requires = ["matplotlib>=1.4"],
+    install_requires = ["matplotlib>=2"],
 
     author = "Marc Harper",
     author_email = "marc.harper@gmail.com",
