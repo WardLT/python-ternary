@@ -1,6 +1,6 @@
 import matplotlib
 from matplotlib import pyplot
-from matplotlib.colors import rgb2hex
+from matplotlib.colors import to_hex
 
 
 ## Default colormap, other options here: http://www.scipy.org/Cookbook/Matplotlib/Show_colormaps
@@ -38,10 +38,12 @@ def get_cmap(cmap=None):
         cmap_name = DEFAULT_COLOR_MAP_NAME
     return pyplot.get_cmap(cmap_name)
 
-def colormapper(value, lower=0, upper=1, cmap=None):
+def colormapper(value, lower=0, upper=1, cmap=None, keep_alpha=True):
     """
     Maps values to colors by normalizing within [a,b], obtaining rgba from the
     given matplotlib color map for heatmap polygon coloring.
+
+    If the colormap returns an alpha channel, keeps it
 
     Parameters
     ----------
@@ -53,6 +55,8 @@ def colormapper(value, lower=0, upper=1, cmap=None):
         Upper bound of colors
     cmap: String or matplotlib.colors.Colormap (optional)
         Colormap object to prevent repeated lookup
+    keep_alpha: bool
+        Whether to keep the alpha channel from the colormap (if present)
 
     Returns
     -------
@@ -60,12 +64,18 @@ def colormapper(value, lower=0, upper=1, cmap=None):
         The value mapped to an appropriate RGBA color value
     """
 
+    # Load in the colormap
     cmap = get_cmap(cmap)
+
+    # Get the color in RGB[A]
     if upper - lower == 0:
         rgba = cmap(0)
     else:
         rgba = cmap((value - lower) / float(upper - lower))
-    hex_ = rgb2hex(rgba)
+
+    # Convert to hex
+    keep_alpha = keep_alpha and not len(rgba) == 3
+    hex_ = to_hex(rgba, keep_alpha=keep_alpha)
     return hex_
 
 def colorbar_hack(ax, vmin, vmax, cmap, scientific=False, cbarlabel=None):
